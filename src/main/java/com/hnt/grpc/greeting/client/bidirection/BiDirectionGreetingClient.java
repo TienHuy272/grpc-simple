@@ -1,9 +1,6 @@
 package com.hnt.grpc.greeting.client.bidirection;
 
-import com.proto.greet.Greeting;
-import com.proto.greet.GreetingServiceGrpc;
-import com.proto.greet.LongGreetRequest;
-import com.proto.greet.LongGreetResponse;
+import com.proto.greet.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
@@ -20,9 +17,9 @@ public class BiDirectionGreetingClient {
                 .build();
         GreetingServiceGrpc.GreetingServiceStub asyncClient = GreetingServiceGrpc.newStub(channel);
         CountDownLatch latch = new CountDownLatch(1);
-        StreamObserver<LongGreetRequest> requestStreamObserver = asyncClient.longGreet(new StreamObserver<>() {
+        StreamObserver<GreetEveryoneRequest> requestStreamObserver = asyncClient.greetEveryone(new StreamObserver<>() {
             @Override
-            public void onNext(LongGreetResponse longGreetResponse) {
+            public void onNext(GreetEveryoneResponse longGreetResponse) {
                 //get response from server
                 System.out.println("Response: " + longGreetResponse.getResult());
             }
@@ -42,9 +39,15 @@ public class BiDirectionGreetingClient {
 
         Arrays.asList("Messi", "Ronaldo", "Kaka", "Neymar", "Suarez")
                         .forEach(name -> {
+                            System.out.println("Sending: " + name);
                             requestStreamObserver.onNext(
-                                    LongGreetRequest.newBuilder()
+                                    GreetEveryoneRequest.newBuilder()
                                             .setGreeting(Greeting.newBuilder().setFirstName(name).build()).build());
+                            try {
+                                Thread.sleep(3000);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
                         });
 
         //tell server client is done on sending data
