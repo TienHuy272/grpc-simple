@@ -1,4 +1,4 @@
-package com.hnt.grpc.greeting.client;
+package com.hnt.grpc.greeting.client.streamingserver;
 
 import com.proto.greet.GreetManyTimesRequest;
 import com.proto.greet.Greeting;

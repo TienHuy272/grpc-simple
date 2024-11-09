@@ -1,14 +1,15 @@
-package com.hnt.grpc.greeting.server;
+package com.hnt.grpc.greeting.server.streamingclient;
 
+import com.hnt.grpc.greeting.service.GreetServiceImpl;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
 import java.io.IOException;
 
-public class GreetingServer {
+public class StreamingClientGreetingServer {
     public static void main(String[] args) throws IOException, InterruptedException {
         System.out.println("GRPC Server is up !");
-        Server server = ServerBuilder.forPort(50052)
+        Server server = ServerBuilder.forPort(50058)
                 .addService(new GreetServiceImpl())
                 .build();
         server.start();

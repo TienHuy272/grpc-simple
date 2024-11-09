@@ -1,4 +1,4 @@
-package com.hnt.grpc.greeting.server;
+package com.hnt.grpc.greeting.service;
 
 import com.proto.greet.*;
 import com.proto.greet.GreetingServiceGrpc.GreetingServiceImplBase;
@@ -40,5 +40,32 @@ public class GreetServiceImpl extends GreetingServiceImplBase {
             responseObserver.onCompleted();
         }
         responseObserver.onCompleted();
+    }
+
+    @Override
+    public StreamObserver<LongGreetRequest> longGreet(StreamObserver<LongGreetResponse> responseObserver) {
+        return new StreamObserver<>() {
+            String result = "";
+
+            @Override
+            public void onNext(LongGreetRequest longGreetRequest) {
+                //client send request
+                result += "Hi " + longGreetRequest.getGreeting().getFirstName() + "\n";
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                //client send error
+            }
+
+            @Override
+            public void onCompleted() {
+                //client is done
+                responseObserver.onNext(
+                        LongGreetResponse.newBuilder().setResult(result).build()
+                );
+                responseObserver.onCompleted();
+            }
+        };
     }
 }

@@ -1,6 +1,5 @@
-package com.hnt.grpc.greeting.client;
+package com.hnt.grpc.greeting.client.unary;
 
-import com.proto.dummy.DummyServiceGrpc;
 import com.proto.greet.Greeting;
 import com.proto.greet.GreetingRequest;
 import com.proto.greet.GreetingResponse;
