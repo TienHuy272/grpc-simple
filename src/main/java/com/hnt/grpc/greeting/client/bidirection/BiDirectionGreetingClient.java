@@ -1,4 +1,4 @@
-package com.hnt.grpc.greeting.client.streamingclient;
+package com.hnt.grpc.greeting.client.bidirection;
 
 import com.proto.greet.Greeting;
 import com.proto.greet.GreetingServiceGrpc;
@@ -12,10 +12,10 @@ import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-public class StreamingClientGreetingClient {
+public class BiDirectionGreetingClient {
     public static void main(String[] args) {
         System.out.println("GRPC Client is up !");
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50058)
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 50059)
                 .usePlaintext()
                 .build();
         GreetingServiceGrpc.GreetingServiceStub asyncClient = GreetingServiceGrpc.newStub(channel);
@@ -23,14 +23,13 @@ public class StreamingClientGreetingClient {
         StreamObserver<LongGreetRequest> requestStreamObserver = asyncClient.longGreet(new StreamObserver<>() {
             @Override
             public void onNext(LongGreetResponse longGreetResponse) {
-                System.out.println("Receive response from server");
-                System.out.println(longGreetResponse.getResult());
                 //get response from server
+                System.out.println("Response: " + longGreetResponse.getResult());
             }
 
             @Override
             public void onError(Throwable throwable) {
-                //get error from server
+                latch.countDown();
             }
 
             @Override
@@ -41,12 +40,12 @@ public class StreamingClientGreetingClient {
             }
         });
 
-        Arrays.asList("Messi", "Ronaldo", "Kaka")
-                .forEach(name -> {
-                    requestStreamObserver.onNext(
-                            LongGreetRequest.newBuilder()
-                                    .setGreeting(Greeting.newBuilder().setFirstName(name).build()).build());
-                });
+        Arrays.asList("Messi", "Ronaldo", "Kaka", "Neymar", "Suarez")
+                        .forEach(name -> {
+                            requestStreamObserver.onNext(
+                                    LongGreetRequest.newBuilder()
+                                            .setGreeting(Greeting.newBuilder().setFirstName(name).build()).build());
+                        });
 
         //tell server client is done on sending data
         requestStreamObserver.onCompleted();
